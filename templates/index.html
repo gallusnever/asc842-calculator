@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASC 842 Lease Calculator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ASC 842 Lease Accounting Calculator</h1>
+            <p class="subtitle">Comprehensive lease analysis with classification, amortization, and journal entries</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" data-tab="unified">Complete Analysis</button>
+            <button class="tab-button" data-tab="guidance">Technical Guidance</button>
+        </div>
+
+        <!-- Unified Analysis Tab -->
+        <div id="unified" class="tab-content active">
+            <h2>Lease Information</h2>
+            
+            <form id="unified-form">
+                <!-- Basic Lease Terms -->
+                <div class="section-title">Basic Lease Terms</div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="lease_commencement_date">Lease Commencement Date*</label>
+                        <input type="date" id="lease_commencement_date" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="monthly_payment">Monthly Payment*</label>
+                        <input type="number" id="monthly_payment" placeholder="2000" step="0.01" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="lease_term_months">Lease Term (months)*</label>
+                        <input type="number" id="lease_term_months" placeholder="60" step="1" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="payment_timing">Payment Timing*</label>
+                        <select id="payment_timing" required>
+                            <option value="ARREARS">End of Period (Arrears)</option>
+                            <option value="ADVANCE">Beginning of Period (Advance)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Discount Rate Section -->
+                <div class="section-title">Discount Rate</div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="discount_rate">Annual Discount Rate*</label>
+                        <input type="number" id="discount_rate" placeholder="0.05" step="0.0001" required>
+                        <small>Enter as decimal (5% = 0.05)</small>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>
+                            <input type="checkbox" id="use_treasury_rate">
+                            Use Treasury Rate (Risk-Free Rate Practical Expedient)
+                        </label>
+                        <small id="treasury_rate_display" style="display: none;">
+                            Approximate rate: <span id="treasury_rate_value"></span>
+                            <br><span style="color: var(--warning);">⚠️ Static rates - not live data</span>
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Classification Tests -->
+                <div class="section-title">Classification Test Inputs</div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="fair_value">Fair Value of Asset (Optional)</label>
+                        <input type="number" id="fair_value" placeholder="100000" step="0.01">
+                        <small>Required for present value test</small>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="asset_life_months">Asset Life (months) (Optional)</label>
+                        <input type="number" id="asset_life_months" placeholder="120" step="1">
+                        <small>Required for lease term test</small>
+                    </div>
+                </div>
+                
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="has_transfer_title">
+                        Transfer of ownership at end of lease
+                    </label>
+                    <label>
+                        <input type="checkbox" id="has_bargain_purchase">
+                        Bargain purchase option exists
+                    </label>
+                    <label>
+                        <input type="checkbox" id="is_specialized">
+                        Specialized asset with no alternative use
+                    </label>
+                </div>
+
+                <!-- Initial Recognition Adjustments -->
+                <div class="section-title">Initial Recognition Adjustments (Optional)</div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="prepaid_rent">Prepaid Rent</label>
+                        <input type="number" id="prepaid_rent" placeholder="0" step="0.01" value="0">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="initial_direct_costs">Initial Direct Costs</label>
+                        <input type="number" id="initial_direct_costs" placeholder="0" step="0.01" value="0">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="lease_incentives">Lease Incentives Received</label>
+                        <input type="number" id="lease_incentives" placeholder="0" step="0.01" value="0">
+                    </div>
+                </div>
+
+                <!-- Reporting Settings -->
+                <div class="section-title">Reporting Settings</div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="fiscal_year_end">Fiscal Year End</label>
+                        <input type="text" id="fiscal_year_end" placeholder="12/31" value="12/31" pattern="(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])">
+                        <small>Format: MM/DD</small>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-primary">Run Complete Analysis</button>
+            </form>
+
+            <!-- Results Section -->
+            <div id="results-container" style="display: none;">
+                <!-- Classification Results -->
+                <div id="classification-results" class="results-section"></div>
+                
+                <!-- Initial Recognition Results -->
+                <div id="recognition-results" class="results-section"></div>
+                
+                <!-- Amortization Schedule -->
+                <div id="amortization-results" class="results-section"></div>
+                
+                <!-- Journal Entries -->
+                <div id="journal-entries-results" class="results-section"></div>
+                
+                <!-- Download Button -->
+                <div class="download-section" style="display: none;">
+                    <button class="btn-primary" onclick="downloadCompleteAnalysis()">Download Complete Analysis (Excel)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Guidance Tab -->
+        <div id="guidance" class="tab-content">
+            <h2>ASC 842 Technical Guidance</h2>
+            
+            <div class="guidance-section">
+                <h3>Lease Classification Tests</h3>
+                <p>A lease is classified as a finance lease if it meets ANY of the following criteria:</p>
+                <ol>
+                    <li><strong>Transfer of Ownership:</strong> The lease transfers ownership of the asset to the lessee by the end of the lease term.</li>
+                    <li><strong>Purchase Option:</strong> The lease grants the lessee an option to purchase the asset that the lessee is reasonably certain to exercise.</li>
+                    <li><strong>Lease Term:</strong> The lease term is for the major part of the remaining economic life of the asset (generally ≥ 75%).</li>
+                    <li><strong>Present Value:</strong> The present value of lease payments equals or exceeds substantially all of the fair value of the asset (generally ≥ 90%).</li>
+                    <li><strong>Specialized Nature:</strong> The asset is of such a specialized nature that it is expected to have no alternative use to the lessor at the end of the lease term.</li>
+                </ol>
+            </div>
+            
+            <div class="guidance-section">
+                <h3>Initial Recognition</h3>
+                <p><strong>Lease Liability:</strong> Present value of lease payments not yet paid</p>
+                <p><strong>ROU Asset:</strong> Lease liability + Prepaid rent + Initial direct costs - Lease incentives received</p>
+            </div>
+            
+            <div class="guidance-section">
+                <h3>Subsequent Measurement</h3>
+                <h4>Operating Leases:</h4>
+                <ul>
+                    <li>Single lease cost recognized on straight-line basis</li>
+                    <li>Lease liability reduced by payments less interest</li>
+                    <li>ROU asset amortization is a plug to achieve straight-line expense</li>
+                </ul>
+                
+                <h4>Finance Leases:</h4>
+                <ul>
+                    <li>Interest expense on lease liability</li>
+                    <li>Amortization expense on ROU asset (typically straight-line)</li>
+                    <li>Total expense front-loaded due to interest</li>
+                </ul>
+            </div>
+            
+            <div class="guidance-section">
+                <h3>Practical Expedients</h3>
+                <p><strong>Risk-Free Rate:</strong> Private companies may elect to use the risk-free rate (e.g., US Treasury rate) as the discount rate.</p>
+                <p><strong>Short-Term Leases:</strong> Leases with terms of 12 months or less may be excluded from balance sheet recognition.</p>
+            </div>
+            
+            <div class="guidance-section">
+                <h3>Treasury Rates (Risk-Free Rate)</h3>
+                <div class="warning-box" style="background: rgba(255, 187, 51, 0.1); border: 1px solid var(--warning); padding: 1rem; margin-bottom: 1rem; border-radius: 4px;">
+                    <strong>⚠️ Important Notice:</strong> The rates shown below are static approximations and NOT live data.
+                    For actual lease accounting, you must obtain current rates from official sources.
+                </div>
+                
+                <h4>How to Get Current Treasury Rates:</h4>
+                <ol>
+                    <li><strong>Primary Source:</strong> Visit <a href="https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve&field_tdr_date_value_month=202501" target="_blank" style="color: var(--accent);">U.S. Treasury Daily Yield Curve Rates</a></li>
+                    <li><strong>What to Look For:</strong> Match your lease term to the appropriate treasury maturity:
+                        <ul style="margin-top: 0.5rem;">
+                            <li>Lease term ≤ 1 year → Use 1-year Treasury</li>
+                            <li>Lease term 1-2 years → Use 2-year Treasury</li>
+                            <li>Lease term 2-3 years → Use 3-year Treasury</li>
+                            <li>Lease term 3-5 years → Use 5-year Treasury</li>
+                            <li>Lease term 5-7 years → Use 7-year Treasury</li>
+                            <li>Lease term 7-10 years → Use 10-year Treasury</li>
+                            <li>Lease term > 10 years → Use 20 or 30-year Treasury</li>
+                        </ul>
+                    </li>
+                    <li><strong>When to Use:</strong> The rate should be as of your lease commencement date</li>
+                    <li><strong>Documentation:</strong> Save a screenshot or PDF of the rates for your audit documentation</li>
+                </ol>
+                
+                <h4>Static Rates in This Tool (Approximate as of 2024/2025):</h4>
+                <div id="treasury-rates-display"></div>
+                <button class="btn-secondary" onclick="loadTreasuryRates()">View Static Rates</button>
+                
+                <div style="margin-top: 1rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 4px;">
+                    <strong>Pro Tip:</strong> For historical rates (if your lease commenced in the past), use the Treasury's 
+                    historical data by adjusting the month/year in the URL above, or search for "Daily Treasury Yield Curve Rates" 
+                    for your specific date.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

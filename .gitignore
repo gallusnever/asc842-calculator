@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+venv311/
+
+# Flask
+instance/
+.webassets-cache
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+server.log
+app.log
+
+# Backups
+*_backup.*
+*.backup
+
+# Local development
+.env
+.env.local
+
+# Temporary files
+*.tmp
+*.temp
+EOF < /dev/null

@@ -1,0 +1,761 @@
+/* ASC 842 Calculator - GWUPF Dark Theme */
+
+:root {
+    --accent: #00a8ff;
+    --success: #00ff41;
+    --warning: #ffbb33;
+    --danger: #ff3838;
+    --bg: #0a0a0a;
+    --bg-secondary: #141414;
+    --bg-tertiary: #1a1a1a;
+    --text: #e4e4e4;
+    --text-secondary: #888888;
+    --border: #2a2a2a;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', Courier, monospace;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    margin-bottom: 30px;
+}
+
+h1 {
+    color: var(--text);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: -1px;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    background: var(--bg-secondary);
+    padding: 10px;
+    border: 1px solid var(--border);
+}
+
+.tab-button {
+    flex: 1;
+    padding: 12px 20px;
+    background: transparent;
+    border: 1px solid var(--border);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.tab-button:hover {
+    background: var(--bg-tertiary);
+    color: var(--text);
+    border-color: var(--accent);
+}
+
+.tab-button.active {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+}
+
+.tab-content {
+    display: none;
+    background: var(--bg-secondary);
+    padding: 30px;
+    border: 1px solid var(--border);
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+h2 {
+    color: var(--text);
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+h3 {
+    color: var(--text);
+    font-size: 1.4rem;
+    margin: 20px 0 15px;
+    font-weight: 700;
+}
+
+h4 {
+    color: var(--text);
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+/* Input Grid */
+.input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    color: var(--text);
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.input-group input,
+.input-group select {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(0, 168, 255, 0.2);
+}
+
+.input-group small {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin-top: 4px;
+}
+
+/* Checkbox Group */
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 25px 0;
+    padding: 20px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    cursor: pointer;
+    accent-color: var(--accent);
+}
+
+/* Buttons */
+.btn-primary,
+.btn-secondary {
+    padding: 12px 30px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+}
+
+.btn-primary:hover {
+    background: transparent;
+    color: var(--accent);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--text-secondary);
+    border-color: var(--border);
+}
+
+.btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Results Section */
+.results-section {
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 1px solid var(--border);
+}
+
+.result-box {
+    background: var(--bg-tertiary);
+    padding: 20px;
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.lease-type-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.lease-type-badge.finance {
+    background: var(--warning);
+    color: var(--bg);
+}
+
+.lease-type-badge.operating {
+    background: var(--success);
+    color: var(--bg);
+}
+
+/* Test Results */
+.test-results {
+    display: grid;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.test-result {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--border);
+}
+
+.test-result.passed {
+    border-left-color: var(--success);
+}
+
+.test-result.failed {
+    border-left-color: var(--text-secondary);
+}
+
+.test-name {
+    font-weight: 600;
+    color: var(--text);
+}
+
+.test-value {
+    font-family: 'Courier New', monospace;
+    color: var(--text-secondary);
+}
+
+.test-status {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    font-weight: bold;
+}
+
+.test-status.passed {
+    background: var(--success);
+    color: var(--bg);
+}
+
+.test-status.failed {
+    background: var(--text-secondary);
+    color: var(--bg);
+}
+
+/* Calculation Results */
+.calculation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.calc-item {
+    padding: 15px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    text-align: center;
+}
+
+.calc-label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.calc-value {
+    color: var(--accent);
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+/* Amortization Table */
+.amortization-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    border: 1px solid var(--border);
+}
+
+.amortization-table thead {
+    background: var(--bg-tertiary);
+}
+
+.amortization-table th {
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.amortization-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+}
+
+.amortization-table tbody tr:hover {
+    background: var(--bg-tertiary);
+}
+
+.amortization-table td:first-child {
+    font-weight: 600;
+    color: var(--text);
+}
+
+/* Guidance Sections */
+.guidance-section {
+    margin-bottom: 40px;
+}
+
+.test-card {
+    background: var(--bg-tertiary);
+    padding: 15px;
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+    border-left: 3px solid var(--accent);
+}
+
+.test-card h4 {
+    color: var(--accent);
+    margin-bottom: 8px;
+}
+
+.formula-box {
+    background: var(--bg-tertiary);
+    color: var(--accent);
+    padding: 20px;
+    border: 1px solid var(--border);
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.comparison-card {
+    background: var(--bg-tertiary);
+    padding: 20px;
+    border: 1px solid var(--border);
+}
+
+.comparison-card h4 {
+    color: var(--accent);
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.comparison-card ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.comparison-card li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+}
+
+.comparison-card li:last-child {
+    border-bottom: none;
+}
+
+.rates-display {
+    margin-top: 20px;
+    padding: 20px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+}
+
+/* Loading and Error States */
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-secondary);
+}
+
+.error {
+    background: rgba(255, 56, 56, 0.1);
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    padding: 15px;
+    margin: 20px 0;
+}
+
+.success {
+    background: rgba(0, 255, 65, 0.1);
+    border: 1px solid var(--success);
+    color: var(--success);
+    padding: 15px;
+    margin: 20px 0;
+}
+
+/* GWUPF Signature Touch */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(0, 168, 255, 0.01) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 168, 255, 0.01) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem;
+    }
+    
+    .tabs {
+        flex-direction: column;
+    }
+    
+    .comparison-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .calculation-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Enhanced styles for unified form */
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin: 2rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+/* Classification results */
+.classification-result {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.classification-result.finance-lease h4 {
+    color: var(--warning);
+}
+
+.classification-result.operating-lease h4 {
+    color: var(--success);
+}
+
+.test-results {
+    margin-top: 1rem;
+}
+
+.test-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+}
+
+.test-met {
+    border-left: 3px solid var(--success);
+}
+
+.test-not-met {
+    border-left: 3px solid var(--text-secondary);
+}
+
+.test-status {
+    font-weight: bold;
+    margin-left: 1rem;
+}
+
+/* Recognition table */
+.recognition-table {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.recognition-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.recognition-table .amount {
+    text-align: right;
+    font-family: 'Courier New', monospace;
+}
+
+.recognition-table .total-row {
+    font-weight: bold;
+    background: var(--bg-tertiary);
+}
+
+/* Enhanced amortization table */
+.schedule-table-container {
+    overflow-x: auto;
+    margin-top: 1rem;
+}
+
+.amortization-table thead {
+    background: var(--bg-tertiary);
+    position: sticky;
+    top: 0;
+}
+
+.amortization-table th {
+    font-weight: 600;
+    text-align: center;
+    padding: 0.75rem 0.5rem;
+    border: 1px solid var(--border);
+}
+
+.amortization-table th.rou-section {
+    background: rgba(0, 168, 255, 0.1);
+    color: var(--accent);
+}
+
+.amortization-table th.liability-section {
+    background: rgba(255, 187, 51, 0.1);
+    color: var(--warning);
+}
+
+.amortization-table .ellipsis-row td {
+    text-align: center;
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+/* Journal entries */
+.journal-entry-section {
+    margin: 2rem 0;
+}
+
+.journal-entry {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.entry-header {
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+}
+
+.journal-table {
+    width: 100%;
+}
+
+.journal-table td {
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--bg-tertiary);
+}
+
+.journal-table .account {
+    width: 50%;
+}
+
+.journal-table .debit,
+.journal-table .credit {
+    width: 25%;
+    text-align: right;
+    font-family: 'Courier New', monospace;
+}
+
+.journal-table .debit:not(:empty) {
+    color: var(--success);
+}
+
+.journal-table .credit:not(:empty) {
+    color: var(--danger);
+}
+
+/* Download section */
+.download-section {
+    text-align: center;
+    margin: 3rem 0;
+    padding: 2rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+}
+
+/* Treasury rates table */
+.rates-table {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.rates-table th,
+.rates-table td {
+    padding: 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+.rates-table th {
+    background: var(--bg-tertiary);
+    font-weight: 600;
+}
+
+/* Note styling */
+.note {
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+/* Warning box */
+.warning-box {
+    background: rgba(255, 187, 51, 0.1);
+    border: 1px solid var(--warning);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
+
+/* Pulse animation for treasury rate warning */
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.02);
+    }
+    100% {
+        opacity: 1;
+    }
+}
