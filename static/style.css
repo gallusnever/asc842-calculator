@@ -34,11 +34,57 @@ body {
 }
 
 header {
-    text-align: center;
     padding: 40px 20px;
     background: var(--bg-secondary);
     border: 1px solid var(--border);
+    margin-bottom: 0;
+}
+
+.header-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header-main {
+    text-align: center;
+    flex: 1;
+}
+
+.home-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 10px 20px;
+    border: 1px solid var(--border);
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.home-link:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Disclaimer Bar */
+.disclaimer-bar {
+    background: rgba(255, 56, 56, 0.1);
+    border: 1px solid var(--danger);
+    border-left: 3px solid var(--danger);
+    padding: 12px 20px;
     margin-bottom: 30px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.disclaimer-bar strong {
+    color: var(--danger);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-right: 8px;
 }
 
 h1 {
@@ -542,6 +588,20 @@ body::before {
     
     .calculation-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .header-wrapper {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .home-link {
+        margin-top: 10px;
+    }
+    
+    .disclaimer-bar {
+        font-size: 0.75rem;
+        padding: 10px 15px;
     }
 }
 
