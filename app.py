@@ -7,11 +7,10 @@ from flask import Flask, render_template, request, jsonify, send_file, session
 import json
 import pandas as pd
 from io import BytesIO
-from datetime import datetime
+from datetime import datetime, timedelta
 import traceback
 import os
 import logging
-from datetime import datetime, timedelta
 
 from asc842_calculator import (
     ASC842Calculator, 
@@ -26,14 +25,23 @@ app.config['SECRET_KEY'] = 'asc842-calculator-2024'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
 
 # Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('asc842_usage.log'),
-        logging.StreamHandler()
-    ]
-)
+try:
+    handlers = [logging.StreamHandler()]
+    # Try to add file handler, but don't fail if we can't write to filesystem
+    try:
+        handlers.append(logging.FileHandler('asc842_usage.log'))
+    except Exception:
+        pass  # File logging not available, continue with console only
+    
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=handlers
+    )
+except Exception:
+    # Fallback to basic config
+    logging.basicConfig(level=logging.INFO)
+
 logger = logging.getLogger(__name__)
 
 # Initialize calculator
@@ -463,8 +471,11 @@ def unified_calculation():
         }
         
         # Write to calculations log
-        with open('calculations.log', 'a') as f:
-            f.write(json.dumps(calculation_log) + '\n')
+        try:
+            with open('calculations.log', 'a') as f:
+                f.write(json.dumps(calculation_log) + '\n')
+        except Exception as e:
+            logger.warning(f"Could not write to calculations.log: {str(e)}")
         
         logger.info(f"Calculation performed - User: {user_email}, Type: {lease_type.value}, Amount: ${monthly_payment:,.2f}")
         
@@ -702,8 +713,11 @@ def accept_terms():
         }
         
         # Write to separate acceptance log file
-        with open('terms_acceptances.log', 'a') as f:
-            f.write(json.dumps(acceptance_log) + '\n')
+        try:
+            with open('terms_acceptances.log', 'a') as f:
+                f.write(json.dumps(acceptance_log) + '\n')
+        except Exception as e:
+            logger.warning(f"Could not write to terms_acceptances.log: {str(e)}")
         
         return jsonify({
             'success': True,
