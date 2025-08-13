@@ -462,8 +462,6 @@ function setupTermsForm() {
         e.preventDefault();
         
         const formData = {
-            name: document.getElementById('userName').value,
-            email: document.getElementById('userEmail').value,
             accepted: document.getElementById('acceptTerms').checked
         };
         

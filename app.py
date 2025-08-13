@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 import traceback
 import os
 import logging
+import hashlib
 
 from asc842_calculator import (
     ASC842Calculator, 
@@ -439,18 +440,18 @@ def unified_calculation():
                 'total_expense': row['total_expense']
             })
         
-        # Log the calculation
-        user_name = session.get('user_name', 'Unknown')
-        user_email = session.get('user_email', 'Unknown')
+        # Log the calculation anonymously
         user_ip = request.remote_addr
         user_agent = request.headers.get('User-Agent', 'Unknown')
+        session_id = session.get('_id', 'unknown')
+        
+        # Create same hash as acceptance
+        hash_input = f"{user_ip}{user_agent}{session_id}".encode('utf-8')
+        user_hash = hashlib.sha256(hash_input).hexdigest()[:12]
         
         calculation_log = {
             'timestamp': datetime.now().isoformat(),
-            'user_name': user_name,
-            'user_email': user_email,
-            'ip': user_ip,
-            'user_agent': user_agent,
+            'user_hash': user_hash,
             'inputs': {
                 'monthly_payment': monthly_payment,
                 'lease_term_months': lease_term_months,
@@ -477,7 +478,7 @@ def unified_calculation():
         except Exception as e:
             logger.warning(f"Could not write to calculations.log: {str(e)}")
         
-        logger.info(f"Calculation performed - User: {user_email}, Type: {lease_type.value}, Amount: ${monthly_payment:,.2f}")
+        logger.info(f"Calculation performed - Hash: {user_hash}, Type: {lease_type.value}, Amount: ${monthly_payment:,.2f}")
         
         return jsonify({
             'success': True,
@@ -658,11 +659,9 @@ def check_acceptance():
     """Check if user has accepted terms in current session"""
     try:
         accepted = session.get('terms_accepted', False)
-        user_email = session.get('user_email', None)
         
         return jsonify({
-            'accepted': accepted,
-            'email': user_email
+            'accepted': accepted
         })
     except Exception as e:
         logger.error(f"Error checking acceptance: {str(e)}")
@@ -676,10 +675,6 @@ def accept_terms():
     """Record user's acceptance of terms"""
     try:
         data = request.json
-        
-        # Extract user data
-        user_name = data.get('name', 'Anonymous')
-        user_email = data.get('email', 'unknown@example.com')
         accepted = data.get('accepted', False)
         
         if not accepted:
@@ -690,25 +685,25 @@ def accept_terms():
         
         # Store in session
         session['terms_accepted'] = True
-        session['user_name'] = user_name
-        session['user_email'] = user_email
         session['acceptance_timestamp'] = datetime.now().isoformat()
         session.permanent = True
         
-        # Get user info for logging
+        # Create anonymous hash for tracking
         user_ip = request.remote_addr
         user_agent = request.headers.get('User-Agent', 'Unknown')
+        session_id = session.get('_id', 'unknown')
         
-        # Log the acceptance
-        logger.info(f"Terms accepted - Name: {user_name}, Email: {user_email}, IP: {user_ip}, UserAgent: {user_agent}")
+        # Create hash from IP + User Agent + Session ID
+        hash_input = f"{user_ip}{user_agent}{session_id}".encode('utf-8')
+        user_hash = hashlib.sha256(hash_input).hexdigest()[:12]  # First 12 chars of hash
+        
+        # Log the acceptance anonymously
+        logger.info(f"Terms accepted - Hash: {user_hash}, IP: {user_ip}")
         
         # Log to file with structured format
         acceptance_log = {
             'timestamp': datetime.now().isoformat(),
-            'name': user_name,
-            'email': user_email,
-            'ip': user_ip,
-            'user_agent': user_agent,
+            'user_hash': user_hash,
             'version': '1.0.0'
         }
         
