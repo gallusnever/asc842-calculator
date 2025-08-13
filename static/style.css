@@ -33,39 +33,34 @@ body {
     padding: 20px;
 }
 
+/* Top Navigation */
+.top-nav {
+    padding: 20px;
+    margin-bottom: 0;
+}
+
+.logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+    text-decoration: none;
+}
+
+.logo:hover {
+    color: var(--accent);
+}
+
 header {
     padding: 40px 20px;
     background: var(--bg-secondary);
     border: 1px solid var(--border);
     margin-bottom: 0;
-}
-
-.header-wrapper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
+    text-align: center;
 }
 
 .header-main {
-    text-align: center;
-    flex: 1;
-}
-
-.home-link {
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-weight: 600;
-    padding: 10px 20px;
-    border: 1px solid var(--border);
-    transition: all 0.2s ease;
-    white-space: nowrap;
-}
-
-.home-link:hover {
-    color: var(--accent);
-    border-color: var(--accent);
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 /* Disclaimer Bar */
@@ -590,14 +585,6 @@ body::before {
         grid-template-columns: 1fr;
     }
     
-    .header-wrapper {
-        flex-direction: column;
-        gap: 20px;
-    }
-    
-    .home-link {
-        margin-top: 10px;
-    }
     
     .disclaimer-bar {
         font-size: 0.75rem;
