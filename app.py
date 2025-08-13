@@ -3,13 +3,15 @@ ASC 842 Lease Calculator Web Application
 Simple, functional Flask app for lease accounting calculations
 """
 
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify, send_file, session
 import json
 import pandas as pd
 from io import BytesIO
 from datetime import datetime
 import traceback
 import os
+import logging
+from datetime import datetime, timedelta
 
 from asc842_calculator import (
     ASC842Calculator, 
@@ -21,6 +23,18 @@ from asc842_calculator import (
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'asc842-calculator-2024'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
+
+# Setup logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('asc842_usage.log'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
 
 # Initialize calculator
 calculator = ASC842Calculator()
@@ -309,6 +323,13 @@ def unified_calculation():
     Unified endpoint that performs all calculations at once
     """
     try:
+        # Check if user has accepted terms
+        if not session.get('terms_accepted', False):
+            return jsonify({
+                'success': False,
+                'error': 'Terms must be accepted before using this calculator'
+            }), 403
+        
         data = request.json
         
         # Extract required fields
@@ -409,6 +430,43 @@ def unified_calculation():
                 'payment': row['payment'],
                 'total_expense': row['total_expense']
             })
+        
+        # Log the calculation
+        user_name = session.get('user_name', 'Unknown')
+        user_email = session.get('user_email', 'Unknown')
+        user_ip = request.remote_addr
+        user_agent = request.headers.get('User-Agent', 'Unknown')
+        
+        calculation_log = {
+            'timestamp': datetime.now().isoformat(),
+            'user_name': user_name,
+            'user_email': user_email,
+            'ip': user_ip,
+            'user_agent': user_agent,
+            'inputs': {
+                'monthly_payment': monthly_payment,
+                'lease_term_months': lease_term_months,
+                'discount_rate': discount_rate,
+                'payment_timing': payment_timing.value,
+                'fair_value': fair_value,
+                'asset_life_months': asset_life_months,
+                'lease_commencement_date': lease_commencement_date.isoformat()
+            },
+            'results': {
+                'lease_type': lease_type.value,
+                'initial_liability': float(initial_recognition['lease_liability']),
+                'initial_rou_asset': float(initial_recognition['rou_asset']),
+                'total_payments': monthly_payment * lease_term_months,
+                'total_interest': float(amortization_schedule['interest_expense'].sum())
+            },
+            'version': '1.0.0'
+        }
+        
+        # Write to calculations log
+        with open('calculations.log', 'a') as f:
+            f.write(json.dumps(calculation_log) + '\n')
+        
+        logger.info(f"Calculation performed - User: {user_email}, Type: {lease_type.value}, Amount: ${monthly_payment:,.2f}")
         
         return jsonify({
             'success': True,
@@ -579,6 +637,81 @@ def get_treasury_rates():
             'rates': calculator.treasury_rates
         })
     except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/check-acceptance', methods=['GET'])
+def check_acceptance():
+    """Check if user has accepted terms in current session"""
+    try:
+        accepted = session.get('terms_accepted', False)
+        user_email = session.get('user_email', None)
+        
+        return jsonify({
+            'accepted': accepted,
+            'email': user_email
+        })
+    except Exception as e:
+        logger.error(f"Error checking acceptance: {str(e)}")
+        return jsonify({
+            'accepted': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/accept-terms', methods=['POST'])
+def accept_terms():
+    """Record user's acceptance of terms"""
+    try:
+        data = request.json
+        
+        # Extract user data
+        user_name = data.get('name', 'Anonymous')
+        user_email = data.get('email', 'unknown@example.com')
+        accepted = data.get('accepted', False)
+        
+        if not accepted:
+            return jsonify({
+                'success': False,
+                'error': 'Terms must be accepted'
+            }), 400
+        
+        # Store in session
+        session['terms_accepted'] = True
+        session['user_name'] = user_name
+        session['user_email'] = user_email
+        session['acceptance_timestamp'] = datetime.now().isoformat()
+        session.permanent = True
+        
+        # Get user info for logging
+        user_ip = request.remote_addr
+        user_agent = request.headers.get('User-Agent', 'Unknown')
+        
+        # Log the acceptance
+        logger.info(f"Terms accepted - Name: {user_name}, Email: {user_email}, IP: {user_ip}, UserAgent: {user_agent}")
+        
+        # Log to file with structured format
+        acceptance_log = {
+            'timestamp': datetime.now().isoformat(),
+            'name': user_name,
+            'email': user_email,
+            'ip': user_ip,
+            'user_agent': user_agent,
+            'version': '1.0.0'
+        }
+        
+        # Write to separate acceptance log file
+        with open('terms_acceptances.log', 'a') as f:
+            f.write(json.dumps(acceptance_log) + '\n')
+        
+        return jsonify({
+            'success': True,
+            'message': 'Terms accepted successfully'
+        })
+        
+    except Exception as e:
+        logger.error(f"Error accepting terms: {str(e)}")
         return jsonify({
             'success': False,
             'error': str(e)

@@ -2,6 +2,13 @@
 
 // Global variables
 let currentResults = null;
+let userAccepted = false;
+
+// Check if user has accepted terms
+document.addEventListener('DOMContentLoaded', () => {
+    checkUserAcceptance();
+    setupTermsForm();
+});
 
 // Tab switching
 document.querySelectorAll('.tab-button').forEach(button => {
@@ -414,3 +421,91 @@ function formatPercentage(value) {
 document.addEventListener('DOMContentLoaded', () => {
     loadTreasuryRates();
 });
+
+// Terms acceptance functions
+async function checkUserAcceptance() {
+    try {
+        const response = await fetch('/api/check-acceptance', {
+            method: 'GET',
+            credentials: 'same-origin'
+        });
+        const data = await response.json();
+        
+        if (data.accepted) {
+            userAccepted = true;
+            document.getElementById('termsModal').classList.add('hidden');
+        } else {
+            document.getElementById('termsModal').classList.remove('hidden');
+            document.querySelector('.container').style.filter = 'blur(5px)';
+            document.querySelector('.container').style.pointerEvents = 'none';
+        }
+    } catch (error) {
+        // If check fails, show terms to be safe
+        document.getElementById('termsModal').classList.remove('hidden');
+        document.querySelector('.container').style.filter = 'blur(5px)';
+        document.querySelector('.container').style.pointerEvents = 'none';
+    }
+}
+
+function setupTermsForm() {
+    const form = document.getElementById('termsForm');
+    const checkbox = document.getElementById('acceptTerms');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    // Enable/disable submit button based on checkbox
+    checkbox.addEventListener('change', () => {
+        submitBtn.disabled = !checkbox.checked;
+    });
+    
+    // Handle form submission
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = {
+            name: document.getElementById('userName').value,
+            email: document.getElementById('userEmail').value,
+            accepted: document.getElementById('acceptTerms').checked
+        };
+        
+        try {
+            const response = await fetch('/api/accept-terms', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData),
+                credentials: 'same-origin'
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                userAccepted = true;
+                document.getElementById('termsModal').classList.add('hidden');
+                document.querySelector('.container').style.filter = 'none';
+                document.querySelector('.container').style.pointerEvents = 'auto';
+            } else {
+                alert('Error accepting terms. Please try again.');
+            }
+        } catch (error) {
+            alert('Error accepting terms. Please try again.');
+        }
+    });
+}
+
+// Modify existing functions to check acceptance
+const originalSubmit = document.getElementById('unified-form').addEventListener;
+document.getElementById('unified-form').addEventListener = function(event, handler) {
+    if (event === 'submit') {
+        const wrappedHandler = async function(e) {
+            if (!userAccepted) {
+                e.preventDefault();
+                alert('Please accept the terms of use before using this calculator.');
+                return;
+            }
+            return handler.call(this, e);
+        };
+        return originalSubmit.call(this, event, wrappedHandler);
+    }
+    return originalSubmit.call(this, event, handler);
+};

@@ -806,3 +806,145 @@ body::before {
         opacity: 1;
     }
 }
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    max-width: 800px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 30px;
+}
+
+.modal-content h2 {
+    color: var(--danger);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.modal-content h3 {
+    color: var(--warning);
+    margin: 20px 0 10px;
+}
+
+.modal-content h4 {
+    color: var(--text);
+    margin: 15px 0 10px;
+}
+
+.terms-text {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin-bottom: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.terms-text ul {
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.terms-text li {
+    margin: 5px 0;
+    color: var(--text-secondary);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"] {
+    width: 100%;
+    padding: 8px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 4px;
+}
+
+.form-group.checkbox-group label {
+    display: flex;
+    align-items: flex-start;
+    cursor: pointer;
+}
+
+.form-group.checkbox-group input[type="checkbox"] {
+    margin-right: 10px;
+    margin-top: 4px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: transparent;
+    color: var(--accent);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+.btn-secondary:hover {
+    background: var(--danger);
+    color: var(--bg);
+}

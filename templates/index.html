@@ -7,6 +7,77 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <!-- Terms Acceptance Modal -->
+    <div id="termsModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Terms of Use & Liability Agreement</h2>
+            
+            <div class="terms-text">
+                <h3>IMPORTANT - READ CAREFULLY</h3>
+                <p>This ASC 842 Lease Calculator is provided for informational purposes only.</p>
+                
+                <h4>NO WARRANTY OR GUARANTEE</h4>
+                <ul>
+                    <li>This tool is provided "AS IS" without any warranty of any kind</li>
+                    <li>No guarantee is made regarding accuracy, completeness, or reliability</li>
+                    <li>Results should not be relied upon without independent verification</li>
+                    <li>This tool is NOT endorsed by any accounting firm, regulatory body, or professional organization</li>
+                </ul>
+                
+                <h4>YOUR RESPONSIBILITIES</h4>
+                <ul>
+                    <li>You are solely responsible for verifying all inputs and outputs</li>
+                    <li>You must independently verify all calculations</li>
+                    <li>You should consult with qualified professionals before making decisions</li>
+                    <li>You accept full responsibility for any use of this tool</li>
+                </ul>
+                
+                <h4>LIMITATION OF LIABILITY</h4>
+                <p>The creator, GWUPF, and any associated parties SHALL NOT BE LIABLE for any damages, losses, or consequences arising from the use of this tool, including but not limited to:</p>
+                <ul>
+                    <li>Financial losses</li>
+                    <li>Regulatory penalties</li>
+                    <li>Audit findings</li>
+                    <li>Incorrect financial reporting</li>
+                    <li>Any other direct or indirect damages</li>
+                </ul>
+                
+                <h4>DATA COLLECTION</h4>
+                <p>By using this tool, you agree that the following may be collected and stored:</p>
+                <ul>
+                    <li>Your name and email address</li>
+                    <li>IP address and browser information</li>
+                    <li>All inputs and calculations performed</li>
+                    <li>Timestamp of usage</li>
+                </ul>
+            </div>
+            
+            <form id="termsForm">
+                <div class="form-group">
+                    <label for="userName">Full Name *</label>
+                    <input type="text" id="userName" name="userName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="userEmail">Email Address *</label>
+                    <input type="email" id="userEmail" name="userEmail" required>
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" id="acceptTerms" name="acceptTerms" required>
+                        <span>I have read, understood, and agree to all terms above. I accept full responsibility for verifying all inputs and outputs from this tool.</span>
+                    </label>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" disabled>Accept & Continue</button>
+                    <a href="https://getwhatupayfor.tools" class="btn btn-secondary">Decline & Exit</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
     <div class="container">
         <div class="top-nav">
             <a href="https://getwhatupayfor.tools" class="logo">gwupf</a>
